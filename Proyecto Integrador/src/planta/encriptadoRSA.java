@@ -6,43 +6,61 @@ import java.util.Random;
 public class encriptadoRSA {
 
 	int tamPrimo;
-	private BigInteger p = null;
-	private BigInteger q = null;
-	private BigInteger n;
+	BigInteger p;
+	BigInteger q;
+	public BigInteger n;
+	public BigInteger totient;
+	public BigInteger e, d;
 
-	private BigInteger totient;
-	private BigInteger e, d;
+	boolean isPrime(BigInteger number) {
+		if (number.compareTo(BigInteger.ONE) <= 0) {
+			return false;
+		}
+		for (BigInteger i = BigInteger.valueOf(2); i.multiply(i).compareTo(number) <= 0; i = i.add(BigInteger.ONE)) {
+			if (number.mod(i).equals(BigInteger.ZERO)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	// Constructor para la clase "encriptadoRSA"
 	public encriptadoRSA(int tamPrimo) {
+
 		this.tamPrimo = tamPrimo;
-		generaPrimos(); // Genera p y q
-		generaClaves(); // Genera e y d
+		BigInteger primeP = BigInteger.probablePrime(tamPrimo, new Random());
+		BigInteger primeQ = BigInteger.probablePrime(tamPrimo, new Random());
+		// Now set p and q
+		this.p = primeP;
+		this.q = primeQ;
+		// Inicializa p y q con valores por defecto o calculados.
+		generaClaves(p, q); // Genera e y d
 
 	}
 
 	public encriptadoRSA(BigInteger p, BigInteger q, int tamPrimo) {
 		this.tamPrimo = tamPrimo;
-		this.p = p;
-		this.q = q;
-		generaClaves(); // Genera e y d
+		BigInteger primeP = BigInteger.probablePrime(tamPrimo, new Random());
+		BigInteger primeQ = BigInteger.probablePrime(tamPrimo, new Random());
+		// Now set p and q
+		this.p = primeP;
+		this.q = primeQ;
+		// Inicializa p y q con valores por defecto o calculados.
+		generaClaves(p, q); // Genera e y d
+
 	}
 
 	// Método para generar numeros primos.
-	public void generaPrimos() {
-		p = new BigInteger(tamPrimo, 100, new Random());
-		do
-			q = new BigInteger(tamPrimo, 100, new Random());
-		while (q.compareTo(p) == 0);
-	}
 
 	// Método para generar claves.
-	public void generaClaves() {
+	public void generaClaves(BigInteger valueP, BigInteger valueQ) {
+		// this.p = valueP;
+		// this.q = valueQ;
 		// n = p * q
-		n = p.multiply(q);
+		n = valueP.multiply(valueQ);
 		// toltient = (p-1)*(q-1)
-		totient = p.subtract(BigInteger.valueOf(1));
-		totient = totient.multiply(q.subtract(BigInteger.valueOf(1)));
+		totient = valueP.subtract(BigInteger.valueOf(1));
+		totient = totient.multiply(valueQ.subtract(BigInteger.valueOf(1)));
 		// Elegimos un e coprimo de y menor que n
 		do
 			e = new BigInteger(2 * tamPrimo, new Random());
@@ -121,5 +139,13 @@ public class encriptadoRSA {
 
 	public BigInteger getD() {
 		return (d);
+	}
+
+	public void setP(BigInteger wangoP) {
+		p = wangoP;
+	}
+
+	public void setQ(BigInteger wangoQ) {
+		q = wangoQ;
 	}
 }

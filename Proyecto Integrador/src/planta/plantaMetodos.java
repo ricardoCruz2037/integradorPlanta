@@ -88,13 +88,18 @@ public class plantaMetodos {
 	}
 
 	public void limpiar(JTextField textValorP, JTextField textValorQ, JTextField textFecha, JTextField textHumedad,
-			JTextField textAltura, JTextField textVoltaje) {
+			JTextField textAltura, JTextField textVoltaje, JTextField textModulo, JTextField textToot,
+			JTextField textClaveD, JTextField textClaveE) {
 		textValorP.setText(null);
 		textValorQ.setText(null);
 		textFecha.setText(null);
 		textHumedad.setText(null);
 		textAltura.setText(null);
 		textVoltaje.setText(null);
+		textModulo.setText(null);
+		textToot.setText(null);
+		textClaveD.setText(null);
+		textClaveE.setText(null);
 
 	}
 

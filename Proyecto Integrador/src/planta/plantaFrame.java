@@ -42,6 +42,8 @@ public class plantaFrame extends JFrame {
 	float humedad;
 	float altura;
 	float voltaje;
+	BigInteger p;
+	BigInteger q;
 	private JTextField textModuloN;
 	private JTextField textTot;
 	private JTextField textLlaveE;
@@ -107,7 +109,6 @@ public class plantaFrame extends JFrame {
 
 		textValorP = new JTextField();
 		textValorP.setFont(new Font("Consolas", Font.PLAIN, 14));
-		textValorP.setEditable(false);
 		textValorP.setBounds(124, 137, 86, 20);
 		contentPane.add(textValorP);
 		textValorP.setColumns(10);
@@ -119,7 +120,6 @@ public class plantaFrame extends JFrame {
 
 		textValorQ = new JTextField();
 		textValorQ.setFont(new Font("Consolas", Font.PLAIN, 14));
-		textValorQ.setEditable(false);
 		textValorQ.setColumns(10);
 		textValorQ.setBounds(338, 137, 86, 20);
 		contentPane.add(textValorQ);
@@ -245,51 +245,42 @@ public class plantaFrame extends JFrame {
 		btnLlave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				// Verificar que p y q no sean null
-				if (rsa.getP() != null && rsa.getQ() != null) {
-					rsa.generaClaves();
-
-					textModuloN.setText(rsa.getN().toString());
-					textTot.setText(rsa.getTotient().toString());
-					textLlaveE.setText(rsa.getE().toString());
-					textLlaveD.setText(rsa.getD().toString());
-
-					JOptionPane.showMessageDialog(null, "Llave generada!");
-					btnLlave.setEnabled(false);
-					btnGuardar.setEnabled(true);
-					btnCifrar.setEnabled(true);
-
+				if (textValorP.getText().isEmpty() || textValorQ.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Primero debes escribir los dos números primos.");
 				} else {
-					JOptionPane.showMessageDialog(null, "Primero debes generar los números primos.");
-				}
+					try {
+						BigInteger pBigInteger = new BigInteger(textValorP.getText());
+						BigInteger qBigInteger = new BigInteger(textValorQ.getText());
 
+						if (!rsa.isPrime(pBigInteger) || !rsa.isPrime(qBigInteger)) {
+							JOptionPane.showMessageDialog(null, "P y Q deben ser numeros primos");
+							return;
+						}
+
+						rsa.setP(pBigInteger);
+						rsa.setQ(qBigInteger);
+						rsa.generaClaves(pBigInteger, qBigInteger);
+
+						textValorP.setText(pBigInteger.toString());
+						textValorQ.setText(qBigInteger.toString());
+						textModuloN.setText(rsa.getN().toString());
+						textTot.setText(rsa.getTotient().toString());
+						textLlaveE.setText(rsa.getE().toString());
+						textLlaveD.setText(rsa.getD().toString());
+
+						JOptionPane.showMessageDialog(null, "Llave generada!");
+
+						// btnLlave.setEnabled(false);
+						btnGuardar.setEnabled(true);
+						btnCifrar.setEnabled(true);
+
+					} catch (Exception e2) {
+						JOptionPane.showMessageDialog(null, "Error al generar llave.");
+					}
+				}
 			}
 		});
-		btnLlave.setEnabled(false);
-
-		JButton btnPrimos = new JButton("Generar números primos");
-		btnPrimos.setFont(new Font("Consolas", Font.PLAIN, 12));
-		btnPrimos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				try {
-					textValorP.setText(null);
-					textValorQ.setText(null);
-					rsa.generaPrimos();
-					BigInteger p = rsa.getP();
-					BigInteger q = rsa.getQ();
-					textValorP.setText(p.toString());
-					textValorQ.setText(q.toString());
-					btnLlave.setEnabled(true);
-				} catch (NumberFormatException a) {
-					JOptionPane.showMessageDialog(null, "Error, no se pudo generar!");
-				}
-			}
-		});
-
-		btnPrimos.setBounds(10, 167, 200, 26);
-		contentPane.add(btnPrimos);
-		btnLlave.setBounds(235, 167, 189, 26);
+		btnLlave.setBounds(134, 175, 189, 26);
 		contentPane.add(btnLlave);
 
 		JLabel lblNewLabel_1 = new JLabel("Fecha");
@@ -385,7 +376,8 @@ public class plantaFrame extends JFrame {
 		btnLimpiar.setFont(new Font("Consolas", Font.PLAIN, 11));
 		btnLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				metodos.limpiar(textValorQ, textValorP, textFecha, textHumedad, textAltura, textVoltaje);
+				metodos.limpiar(textValorQ, textValorP, textFecha, textHumedad, textAltura, textVoltaje, textModuloN,
+						textTot, textLlaveD, textLlaveE);
 			}
 		});
 		btnLimpiar.setBounds(161, 491, 121, 21);
