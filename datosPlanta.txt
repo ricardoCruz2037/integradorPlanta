@@ -1,0 +1,12 @@
+  ───────── ౨ NUEVA ENTRADA DE DATOS ৎ ─────────
+౨ Fecha de los datos: 767 ৎ 
+౨ Humedad actual: 67.0 ৎ 
+౨ Altura de la lechuga: 67.0 ৎ 
+౨ Voltaje recivido: 67.0 ৎ 
+
+  ───────── ౨ NUEVA ENTRADA DE DATOS ৎ ─────────
+౨ Fecha de los datos: 767 ৎ 
+౨ Humedad actual: 67.0 ৎ 
+౨ Altura de la lechuga: 67.0 ৎ 
+౨ Voltaje recivido: 67.0 ৎ 
+
