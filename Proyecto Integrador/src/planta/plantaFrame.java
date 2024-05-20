@@ -56,7 +56,7 @@ public class plantaFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					memMetodos.iniciarSesion();
+					Login.main(args);
 					plantaFrame frame = new plantaFrame();
 					frame.setVisible(true);
 
