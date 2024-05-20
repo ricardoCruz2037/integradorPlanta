@@ -18,8 +18,9 @@ public class plantaMetodos {
 
 	int tamPrimo;
 
-	public void guardarDatos(String fecha, float humedad, float altura, float voltaje) {
-
+	// Método para guardar datos.
+	public void guardarDatos(String fecha, String humedad, float altura, float voltaje) {
+		// Revisar existencia del archivo datosPlanta.txt
 		Path path = Path.of("datosPlanta.txt");
 		if (!Files.exists(path)) {
 			try {
@@ -30,17 +31,17 @@ public class plantaMetodos {
 		}
 
 		String stFecha = fecha;
-		float stHumedad = humedad;
+		String stHumedad = humedad;
 		float stAltura = altura;
 		float stVoltaje = voltaje;
-
+		// Buffer escritor para escribir los datos recibidos.
 		try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
 			bufferedWriter.write(separador());
-			bufferedWriter.write("\n౨ Fecha de los datos: " + stFecha + " ৎ \n");
-			bufferedWriter.write("౨ Humedad actual: " + String.valueOf(stHumedad) + " ৎ \n");
-			bufferedWriter.write("౨ Altura de la lechuga: " + String.valueOf(stAltura) + " ৎ \n");
-			bufferedWriter.write("౨ Voltaje recivido: " + String.valueOf(stVoltaje) + " ৎ \n");
-			bufferedWriter.newLine(); // Esto añade una nueva línea al final
+			bufferedWriter.write("\n ° Fecha de los datos: " + stFecha + " ° \n");
+			bufferedWriter.write("° Tipo de planta: " + String.valueOf(stHumedad) + " ° \n");
+			bufferedWriter.write("° Altura de la lechuga: " + String.valueOf(stAltura) + " ° Cm \n");
+			bufferedWriter.write("° Voltaje recivido: " + String.valueOf(stVoltaje) + " ° (a) \n");
+			bufferedWriter.newLine(); // Nueva línea al final
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -53,18 +54,20 @@ public class plantaMetodos {
 		}
 	}
 
+	// Método separador
 	public String separador() {
-		String separadorString = "  ───────── ౨ NUEVA ENTRADA DE DATOS ৎ ─────────";
+		String separadorString = "  ───────── > NUEVA ENTRADA DE DATOS < ─────────";
 		return separadorString;
 	}
 
+	// Metodo para abrir ruta
 	public void abrir(String rutaDirect) {
 		String directoryPath = "C:\\Users\\52773\\eclipse-workspace\\Proyecto Integrador";
 
-		// Crear un objeto File para el directorio
+		// Objeto File para el directorio
 		File directory = new File(directoryPath);
 
-		// Verificar si el directorio existe y es un directorio
+		// Verificar existencia directorio existe y es un directorio
 		if (directory.exists() && directory.isDirectory()) {
 			// Abrir el directorio en el explorador de archivos
 			try {
@@ -78,6 +81,7 @@ public class plantaMetodos {
 		}
 	}
 
+	// Método eliminar
 	public void eliminar(String rutaArchivo) {
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(rutaArchivo, false))) {
 			// No es necesario escribir nada, el archivo se sobrescribirá vacío.
@@ -87,9 +91,11 @@ public class plantaMetodos {
 
 	}
 
+	// Método limpiar campos.
 	public void limpiar(JTextField textValorP, JTextField textValorQ, JTextField textFecha, JTextField textHumedad,
 			JTextField textAltura, JTextField textVoltaje, JTextField textModulo, JTextField textToot,
 			JTextField textClaveD, JTextField textClaveE) {
+		// Settear null a cada textLabel
 		textValorP.setText(null);
 		textValorQ.setText(null);
 		textFecha.setText(null);
@@ -103,6 +109,7 @@ public class plantaMetodos {
 
 	}
 
+	// Método para escribir dentro del txt
 	public String escribir(String rutaString) {
 		StringBuilder contenido = new StringBuilder();
 
@@ -119,5 +126,20 @@ public class plantaMetodos {
 		}
 
 		return contenido.toString();
+	}
+
+	public void iniciarSesion() {
+		String username = "user";
+		String password = "test";
+
+		String inputUsername = JOptionPane.showInputDialog(null, "Ingresa tu nombre de usuario:");
+		String inputPassword = JOptionPane.showInputDialog(null, "Ingresa tu contraseña:");
+
+		if (username.equals(inputUsername) && password.equals(inputPassword)) {
+			JOptionPane.showMessageDialog(null, "Inicio de sesión exitoso!");
+		} else {
+			JOptionPane.showMessageDialog(null, "Nombre de usuario o contraseña incorrectos.");
+			System.exit(0);
+		}
 	}
 }

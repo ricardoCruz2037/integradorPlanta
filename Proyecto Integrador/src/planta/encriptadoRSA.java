@@ -12,6 +12,7 @@ public class encriptadoRSA {
 	public BigInteger totient;
 	public BigInteger e, d;
 
+	// Método para asegurarse que p y q son primos.
 	boolean isPrime(BigInteger number) {
 		if (number.compareTo(BigInteger.ONE) <= 0) {
 			return false;
@@ -26,39 +27,36 @@ public class encriptadoRSA {
 
 	// Constructor para la clase "encriptadoRSA"
 	public encriptadoRSA(int tamPrimo) {
-
 		this.tamPrimo = tamPrimo;
+		// Inicializar P Y Q
 		BigInteger primeP = BigInteger.probablePrime(tamPrimo, new Random());
 		BigInteger primeQ = BigInteger.probablePrime(tamPrimo, new Random());
-		// Now set p and q
+		// Set valores a P y Q
 		this.p = primeP;
 		this.q = primeQ;
-		// Inicializa p y q con valores por defecto o calculados.
-		generaClaves(p, q); // Genera e y d
+		// Generar e y d
+		generaClaves(p, q);
 
 	}
 
 	public encriptadoRSA(BigInteger p, BigInteger q, int tamPrimo) {
 		this.tamPrimo = tamPrimo;
+		// Inicializar P Y Q
 		BigInteger primeP = BigInteger.probablePrime(tamPrimo, new Random());
 		BigInteger primeQ = BigInteger.probablePrime(tamPrimo, new Random());
-		// Now set p and q
+		// Set valores a P y Q
 		this.p = primeP;
 		this.q = primeQ;
-		// Inicializa p y q con valores por defecto o calculados.
-		generaClaves(p, q); // Genera e y d
+		// Genera e y d
+		generaClaves(p, q);
 
 	}
 
-	// Método para generar numeros primos.
-
 	// Método para generar claves.
 	public void generaClaves(BigInteger valueP, BigInteger valueQ) {
-		// this.p = valueP;
-		// this.q = valueQ;
 		// n = p * q
 		n = valueP.multiply(valueQ);
-		// toltient = (p-1)*(q-1)
+		// toltiente = (p-1) * (q-1)
 		totient = valueP.subtract(BigInteger.valueOf(1));
 		totient = totient.multiply(valueQ.subtract(BigInteger.valueOf(1)));
 		// Elegimos un e coprimo de y menor que n
@@ -77,21 +75,33 @@ public class encriptadoRSA {
 	 */
 
 	public BigInteger[] encripta(String mensaje) {
-		int i;
-		byte[] temp = new byte[1];
-		byte[] digitos = mensaje.getBytes();
-		BigInteger[] bigdigitos = new BigInteger[digitos.length];
 
+		// Obtenemos la cadena mensaje.
+		int i;
+		// Array de Bytes tamaño 1.
+		byte[] temp = new byte[1];
+		// Array de Bytes con representacion de bytes de mensaje
+		byte[] digitos = mensaje.getBytes();
+		// Array Bytes de misma longitud que digitos
+		BigInteger[] bigdigitos = new BigInteger[digitos.length];
+		/*
+		 * Recorriendo digitos. Cada byte en digitos se copia en temp y se convierte en
+		 * BigInteger que se almacena en bigdigitos
+		 */
 		for (i = 0; i < bigdigitos.length; i++) {
 			temp[0] = digitos[i];
 			bigdigitos[i] = new BigInteger(temp);
 		}
-
+		// Array Bytes de misma long que bigdigitos
+		/*
+		 * Para cada BigInteger en bigdigitos, se eleva a 'e' y se toma el módulo n
+		 * (modPow(e, n)). Resultado se almacena en encriptado.
+		 */
 		BigInteger[] encriptado = new BigInteger[bigdigitos.length];
 
 		for (i = 0; i < bigdigitos.length; i++)
 			encriptado[i] = bigdigitos[i].modPow(e, n);
-
+		// retorno del mensaje cifrado.
 		return (encriptado);
 	}
 
@@ -104,19 +114,29 @@ public class encriptadoRSA {
 	 */
 
 	public String desencripta(BigInteger[] encriptado) {
+		// Parametro Array de BiInteger (Mensaje Cifrado)
+		// Array byte de tamaño encriptado
 		BigInteger[] desencriptado = new BigInteger[encriptado.length];
+
+		// Rara cada número en encriptado se eleva a d y se toma el módulo n
+		// (modPow(d,n))
 
 		for (int i = 0; i < desencriptado.length; i++)
 			desencriptado[i] = encriptado[i].modPow(d, n);
-
+		// Array char de tamaño desencriptado
+		/*
+		 * Para cada número en desencriptado se convierte a valor entero y luego a
+		 * carácter. El resultado se almacena en charArray
+		 */
 		char[] charArray = new char[desencriptado.length];
 
 		for (int i = 0; i < charArray.length; i++)
 			charArray[i] = (char) (desencriptado[i].intValue());
-
+		// Se crea string a partir del array de parametro array (charArray)
 		return (new String(charArray));
 	}
 
+	// Setters y Getters
 	public BigInteger getP() {
 		return (p);
 	}

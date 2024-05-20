@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Panel;
+import java.awt.Scrollbar;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +29,7 @@ import javax.swing.border.EmptyBorder;
 public class plantaFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private plantaMetodos metodos; // Instancia de la clase plantaMetodos
+	private plantaMetodos metodos; // Instancia de la clase plantaMetodos.
 	private JPanel contentPane;
 	private JTextField textValorP;
 	private JTextField textValorQ;
@@ -39,7 +40,7 @@ public class plantaFrame extends JFrame {
 	private JTextArea AreaDatos;
 
 	String fecha;
-	float humedad;
+	String humedad;
 	float altura;
 	float voltaje;
 	BigInteger p;
@@ -48,14 +49,14 @@ public class plantaFrame extends JFrame {
 	private JTextField textTot;
 	private JTextField textLlaveE;
 	private JTextField textLlaveD;
+	static plantaMetodos memMetodos = new plantaMetodos();
 
-	/**
-	 * Launch the application.
-	 */
+	// Ejecutar Frame.
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					memMetodos.iniciarSesion();
 					plantaFrame frame = new plantaFrame();
 					frame.setVisible(true);
 
@@ -66,9 +67,7 @@ public class plantaFrame extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+	// Crear Frame.
 	public plantaFrame() {
 		setBackground(new Color(100, 204, 0));
 		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\52773\\Downloads\\plant.ico"));
@@ -76,7 +75,7 @@ public class plantaFrame extends JFrame {
 		setResizable(false);
 
 		metodos = new plantaMetodos();
-		encriptadoRSA rsa = new encriptadoRSA(8);
+		encriptadoRSA rsa = new encriptadoRSA(8); // Instancia de la clase encriptadoRSA.
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 780, 630);
@@ -127,20 +126,20 @@ public class plantaFrame extends JFrame {
 		JButton btnGuardar = new JButton("Guardar");
 		btnGuardar.setFont(new Font("Consolas", Font.PLAIN, 11));
 		btnGuardar.setEnabled(false);
+		// Acción de guardar.
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				try {
 
-					// Obtenemos los datos de los labels
-
+					// Obtenemos y guardamos texto de labels.
 					fecha = textFecha.getText();
-					humedad = Float.parseFloat(textHumedad.getText());
+					humedad = textHumedad.getText();
 					altura = Float.parseFloat(textAltura.getText());
 					voltaje = Float.parseFloat(textVoltaje.getText());
-					// Lo enviamos al contructor con los valores.
+					// Método guardar en plantaMetodos.java
 					metodos.guardarDatos(fecha, humedad, altura, voltaje);
-
+					// Escribir en archivo txt.
 					String contenidoArchivo = metodos
 							.escribir("C:\\Users\\52773\\eclipse-workspace\\Proyecto Integrador\\datosPlanta.txt");
 					AreaDatos.setText(contenidoArchivo);
@@ -162,33 +161,33 @@ public class plantaFrame extends JFrame {
 		JButton btnCifrar = new JButton("Cifrar");
 		btnCifrar.setFont(new Font("Consolas", Font.PLAIN, 11));
 		btnCifrar.setEnabled(false);
+		// Accion de Cifrar.
 		btnCifrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				try {
-
+					// Buffer lector del archivo txt.
 					BufferedReader reader = new BufferedReader(new FileReader(
 							"C:\\Users\\52773\\eclipse-workspace\\Proyecto Integrador\\datosPlanta.txt"));
 					String linea;
 					StringBuilder contenido = new StringBuilder();
 					StringBuilder contenidoEnString = new StringBuilder();
-
+					// Cuando se termine la cadena.
 					while ((linea = reader.readLine()) != null) {
 						contenido.append(linea).append("\n");
 					}
 					reader.close();
-
-					// Encriptar el contenido
+					// Metodo encriptado en encriptadoRSA.java
 					BigInteger[] contenidoEncriptado = rsa.encripta(contenido.toString());
-
-					// Guardar el contenido encriptado en un nuevo archivo
+					// Guardar el contenido encriptado en archivo txt.
+					// Escritor para el archivo txt.
 					FileWriter writer = new FileWriter(
 							"C:\\Users\\52773\\eclipse-workspace\\Proyecto Integrador\\datosPlantaEncriptados.txt");
 					for (BigInteger bigInt : contenidoEncriptado) {
 						writer.write(bigInt.toString(16) + "\n"); // Guardar como hexadecimal
 						contenidoEnString.append(bigInt.toString(16)).append("\n");
 					}
-					writer.close();
+					writer.close(); // Cierre del lector.
 					AreaDatos.setText(contenidoEnString.toString());
 					btnDescifrar.setEnabled(true);
 					JOptionPane.showMessageDialog(null, "Archivo encriptado con éxito!");
@@ -201,23 +200,23 @@ public class plantaFrame extends JFrame {
 		});
 		btnCifrar.setBounds(161, 523, 121, 23);
 		contentPane.add(btnCifrar);
-
+		// Accion de Decifrar.
 		btnDescifrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					// Leer el archivo encriptado
+					// Leer el archivo encriptado.
 					BufferedReader reader = new BufferedReader(new FileReader(
 							"C:\\Users\\52773\\eclipse-workspace\\Proyecto Integrador\\datosPlantaEncriptados.txt"));
 					String linea;
 					List<BigInteger> contenidoEncriptadoList = new ArrayList<>();
 
 					while ((linea = reader.readLine()) != null) {
-						// Asumiendo que cada línea es un número en base 16 (hexadecimal)
+						// Asumiendo que cada línea es un número en base 16 (hexadecimal).
 						contenidoEncriptadoList.add(new BigInteger(linea, 16));
 					}
 					reader.close();
 
-					// Convertir la lista a un arreglo para desencriptar
+					// Convertir la lista a un arreglo para desencriptar.
 					BigInteger[] contenidoEncriptado = contenidoEncriptadoList.toArray(new BigInteger[0]);
 
 					// Desencriptar el contenido
@@ -242,23 +241,25 @@ public class plantaFrame extends JFrame {
 
 		JButton btnLlave = new JButton("Generar llave RSA");
 		btnLlave.setFont(new Font("Consolas", Font.PLAIN, 12));
+		// Acción de generar llave RSA.
 		btnLlave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				// Comprobar datos en labels.
 				if (textValorP.getText().isEmpty() || textValorQ.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Primero debes escribir los dos números primos.");
 				} else {
 					try {
 						BigInteger pBigInteger = new BigInteger(textValorP.getText());
 						BigInteger qBigInteger = new BigInteger(textValorQ.getText());
-
+						// Comprobar que los números son primos.
 						if (!rsa.isPrime(pBigInteger) || !rsa.isPrime(qBigInteger)) {
 							JOptionPane.showMessageDialog(null, "P y Q deben ser numeros primos");
 							return;
 						}
-
+						// Asignar valores para P y Q.
 						rsa.setP(pBigInteger);
 						rsa.setQ(qBigInteger);
+						// Llamar método para generar claves.
 						rsa.generaClaves(pBigInteger, qBigInteger);
 
 						textValorP.setText(pBigInteger.toString());
@@ -269,8 +270,6 @@ public class plantaFrame extends JFrame {
 						textLlaveD.setText(rsa.getD().toString());
 
 						JOptionPane.showMessageDialog(null, "Llave generada!");
-
-						// btnLlave.setEnabled(false);
 						btnGuardar.setEnabled(true);
 						btnCifrar.setEnabled(true);
 
@@ -286,13 +285,13 @@ public class plantaFrame extends JFrame {
 		JLabel lblNewLabel_1 = new JLabel("Fecha");
 		lblNewLabel_1.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 16));
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNewLabel_1.setBounds(117, 327, 78, 14);
+		lblNewLabel_1.setBounds(117, 333, 78, 14);
 		contentPane.add(lblNewLabel_1);
 
-		JLabel lblNewLabel_1_1 = new JLabel("Humedad");
+		JLabel lblNewLabel_1_1 = new JLabel("Tipo de planta:");
 		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNewLabel_1_1.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 16));
-		lblNewLabel_1_1.setBounds(117, 358, 78, 14);
+		lblNewLabel_1_1.setBounds(94, 358, 101, 20);
 		contentPane.add(lblNewLabel_1_1);
 
 		JLabel lblNewLabel_1_1_1 = new JLabel("Altura");
@@ -333,10 +332,12 @@ public class plantaFrame extends JFrame {
 
 		JButton btnEliminar = new JButton("Eliminar datos");
 		btnEliminar.setFont(new Font("Consolas", Font.PLAIN, 11));
+		// Acción de eliminar campos (en ambos archivos).
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				try {
+					// Llamar metodo eliminar en plantaMetodos.java
 					metodos.eliminar("C:\\Users\\52773\\eclipse-workspace\\Proyecto Integrador\\datosPlanta.txt");
 					metodos.eliminar(
 							"C:\\Users\\52773\\eclipse-workspace\\Proyecto Integrador\\datosPlantaEncriptados.txt");
@@ -357,13 +358,19 @@ public class plantaFrame extends JFrame {
 
 		JButton btnMostrar = new JButton("Mostrar Ruta");
 		btnMostrar.setFont(new Font("Consolas", Font.PLAIN, 11));
+		// Accion de mostrar ruta.
 		btnMostrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Método para abrir ruta.
 				metodos.abrir("C:\\Users\\52773\\eclipse-workspace\\Proyecto Integrador");
 			}
 		});
 		btnMostrar.setBounds(161, 557, 121, 23);
 		contentPane.add(btnMostrar);
+
+		Scrollbar scrollbar = new Scrollbar();
+		scrollbar.setBounds(747, 0, 17, 591);
+		contentPane.add(scrollbar);
 
 		AreaDatos = new JTextArea();
 		AreaDatos.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 14));
@@ -385,11 +392,13 @@ public class plantaFrame extends JFrame {
 
 		JButton btnMostrarDatos = new JButton("Mostrar datos ");
 		btnMostrarDatos.setFont(new Font("Consolas", Font.PLAIN, 11));
+		// Acción de mostrar datos.
 		btnMostrarDatos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				// contenidoArchivo guarda el texto en archivo.
 				String contenidoArchivo = metodos
 						.escribir("C:\\Users\\52773\\eclipse-workspace\\Proyecto Integrador\\datosPlanta.txt");
+				// Escribe el contenido en el textArea.
 				AreaDatos.setText(contenidoArchivo);
 
 			}
@@ -421,29 +430,41 @@ public class plantaFrame extends JFrame {
 		textTot.setBounds(109, 254, 86, 20);
 		contentPane.add(textTot);
 
-		JLabel lblNewLabel_2_1_1 = new JLabel("Clave privada E");
+		JLabel lblNewLabel_2_1_1 = new JLabel("Clave publica E");
 		lblNewLabel_2_1_1.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 16));
-		lblNewLabel_2_1_1.setBounds(205, 255, 110, 19);
+		lblNewLabel_2_1_1.setBounds(205, 224, 110, 19);
 		contentPane.add(lblNewLabel_2_1_1);
 
 		textLlaveE = new JTextField();
 		textLlaveE.setFont(new Font("Consolas", Font.PLAIN, 14));
 		textLlaveE.setEditable(false);
 		textLlaveE.setColumns(10);
-		textLlaveE.setBounds(325, 257, 86, 20);
+		textLlaveE.setBounds(325, 226, 86, 20);
 		contentPane.add(textLlaveE);
 
 		textLlaveD = new JTextField();
 		textLlaveD.setFont(new Font("Consolas", Font.PLAIN, 14));
 		textLlaveD.setEditable(false);
 		textLlaveD.setColumns(10);
-		textLlaveD.setBounds(325, 226, 86, 20);
+		textLlaveD.setBounds(325, 257, 86, 20);
 		contentPane.add(textLlaveD);
 
-		JLabel lblNewLabel_2_1_1_1 = new JLabel("Clave publica D");
+		JLabel lblNewLabel_2_1_1_1 = new JLabel("Clave privada D");
 		lblNewLabel_2_1_1_1.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 16));
-		lblNewLabel_2_1_1_1.setBounds(205, 223, 110, 20);
+		lblNewLabel_2_1_1_1.setBounds(205, 254, 110, 20);
 		contentPane.add(lblNewLabel_2_1_1_1);
+
+		JLabel lblNewLabel_1_2 = new JLabel("Cm");
+		lblNewLabel_1_2.setHorizontalAlignment(SwingConstants.LEFT);
+		lblNewLabel_1_2.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 16));
+		lblNewLabel_1_2.setBounds(333, 395, 78, 14);
+		contentPane.add(lblNewLabel_1_2);
+
+		JLabel lblNewLabel_1_2_1 = new JLabel("(a)");
+		lblNewLabel_1_2_1.setHorizontalAlignment(SwingConstants.LEFT);
+		lblNewLabel_1_2_1.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 16));
+		lblNewLabel_1_2_1.setBounds(333, 425, 78, 17);
+		contentPane.add(lblNewLabel_1_2_1);
 
 	}
 }
